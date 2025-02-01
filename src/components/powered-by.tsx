@@ -1,21 +1,18 @@
 const PoweredBy = () => {
   return (
     <p className="mt-4 text-xs md:text-sm text-text-washed text-center">
-      This project is a prototype for a RAG chatbot. <br /> Built using{" "}
+      This project is a fun prototype for an AI that can help you talk to a PDF
+      file. <br /> Built by{" "}
+      <a href="https://www.linkedin.com/in/yahiya-shareef/" target="_blank">
+        Yahya Shareef
+      </a>{" "}
+      using{" "}
       <a href="https://www.langchain.com/" target="_blank">
         LangChain
-      </a>
-      ,{" "}
-      <a href="https://upstash.com" target="_blank">
-        Upstash Vector
       </a>{" "}
       and{" "}
-      <a href="https://sdk.vercel.ai" target="_blank">
-        Vercel AI SDK
-      </a>{" "}
-      ・{" "}
-      <a href="https://github.com/upstash/DegreeGuru" target="_blank">
-        Source Code
+      <a href="https://www.deepseek.com/" target="_blank">
+        DeepSeek-R1
       </a>
     </p>
   );

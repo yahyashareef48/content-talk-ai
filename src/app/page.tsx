@@ -77,9 +77,9 @@ Your ultimate companion in navigating the academic landscape of Stanford.`,
                 <button
                   key={message.content}
                   type="button"
-                  className="cursor-pointer select-none text-left bg-white font-normal
-                  border border-gray-200 rounded-xl p-3 md:px-4 md:py-3
-                  hover:bg-zinc-50 hover:border-zinc-400"
+                  className="cursor-pointer text-text-lite select-none text-left bg-background font-normal
+                  border border-border rounded-xl p-3 md:px-4 md:py-3
+                  hover:bg-background-hover hover:border-border-hover"
                   onClick={() => onClickQuestion(message.content)}
                 >
                   {message.content}

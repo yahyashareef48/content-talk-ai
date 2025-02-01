@@ -12,13 +12,13 @@ const Message: React.FC<MessageProps> = ({ content, role }) => {
     <article
       className={cx(
         "mb-4 flex items-start gap-4 p-4 md:p-5 rounded-2xl",
-        isUser ? "" : "bg-emerald-50",
+        isUser ? "" : "bg-primary",
       )}
     >
       <Avatar isUser={isUser} />
       <Markdown
         className={cx(
-          "py-1.5 md:py-1 space-y-4",
+          "py-1.5 md:py-1 space-y-4 text-text-lite",
           isUser ? "font-semibold" : "",
         )}
         options={{
@@ -42,7 +42,7 @@ const Avatar: React.FC<{ isUser?: boolean; className?: string }> = ({
     <div
       className={cx(
         "flex items-center justify-center size-8 shrink-0 rounded-full",
-        isUser ? "bg-gray-200 text-gray-700" : "bg-emerald-950",
+        isUser ? "bg-background-lite text-text-lite" : "bg-primary-dark",
         className,
       )}
     >

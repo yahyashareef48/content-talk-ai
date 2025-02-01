@@ -9,14 +9,14 @@
   }
 
   a {
-    @apply text-emerald-700 underline
-        decoration-emerald-700/60 decoration-2
-        hover:decoration-emerald-700 hover:bg-emerald-200
+    @apply text-primary-lite underline
+        decoration-primary-lite/60 decoration-2
+        hover:decoration-primary-lite hover:bg-primary-washed
         outline-0 focus:ring-2 focus:ring-offset-1 focus:ring-emerald-500;
   }
 
   ::selection {
-    @apply bg-emerald-200 text-emerald-950;
+    @apply bg-primary-washed text-emerald-950;
   }
 
   button:focus,

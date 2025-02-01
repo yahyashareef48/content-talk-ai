@@ -22,8 +22,9 @@ const Form = ({ inputProps, buttonProps, onSubmit }: Props, ref: any) => {
         {...inputProps}
         className={cx(
           "transition h-10 md:h-12 pl-4 pr-12 flex-1 rounded-xl",
-          "border border-gray-400 text-base",
+          "border border-border-lite text-base bg-background-dark",
           "disabled:bg-gray-100",
+          "placeholder-text-dark",
           inputProps.className,
         )}
         type="text"
@@ -35,10 +36,10 @@ const Form = ({ inputProps, buttonProps, onSubmit }: Props, ref: any) => {
         tabIndex={-1}
         className={cx(
           "absolute right-3 top-1/2 -translate-y-1/2",
-          "opacity-50",
+          "opacity-50 text-text-washed",
         )}
       >
-        <IconArrowBack stroke={1.5} />
+        <IconArrowBack strokeWidth={1.5} />
       </button>
     </form>
   );

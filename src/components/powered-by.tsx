@@ -1,6 +1,6 @@
 const PoweredBy = () => {
   return (
-    <p className="mt-4 text-xs md:text-sm text-gray-600 text-center">
+    <p className="mt-4 text-xs md:text-sm text-text-washed text-center">
       This project is a prototype for a RAG chatbot. <br /> Built using{" "}
       <a href="https://www.langchain.com/" target="_blank">
         LangChain

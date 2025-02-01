@@ -97,12 +97,12 @@ Your ultimate companion in navigating the academic landscape of Stanford.`,
         className={cx(
           "fixed z-10 bottom-0 inset-x-0",
           "flex justify-center items-center",
-          "bg-white",
+          "bg-background",
         )}
       >
         <span
-          className="absolute bottom-full h-10 inset-x-0 from-white/0
-         bg-gradient-to-b to-white pointer-events-none"
+          className="absolute bottom-full h-10 inset-x-0 from-background/0
+         bg-gradient-to-b to-background pointer-events-none"
         />
 
         <div className="w-full max-w-screen-md rounded-xl px-4 md:px-5 py-6">

@@ -16,7 +16,7 @@
   }
 
   ::selection {
-    @apply bg-primary-washed text-emerald-950;
+    @apply bg-primary-washed text-inherit;
   }
 
   button:focus,

@@ -35,6 +35,12 @@ export class ChatAgent {
       apiKey: GEMINI_API_KEY,
     });
     this.state = { messages: [], pdf_file: null };
+
+    const defaultMessage = new AIMessage({
+      content:
+        "Hello! I am PDF Talk AI. How can I assist you with your PDF document today?",
+    });
+    this.addMessage(defaultMessage);
   }
 
   async callModel(): Promise<AIMessageChunk> {

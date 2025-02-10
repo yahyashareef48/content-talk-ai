@@ -29,6 +29,7 @@ export default function Home() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       agentRef.current?.setPDFFile(e.target.files[0]);
+      setChatLog(agentRef.current?.getMessages() || []);
       setPdfFile(e.target.files[0]);
     }
   };

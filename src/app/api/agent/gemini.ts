@@ -43,6 +43,10 @@ export class ChatAgent {
     this.state.messages.push(message);
   }
 
+  getMessages() {
+    return this.state.messages;
+  }
+
   // Optionally, add a helper to clear conversation
   resetConversation() {
     this.state.messages = [];

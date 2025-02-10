@@ -9,10 +9,6 @@ import { GeminiChatMessage } from "@/app/api/agent/gemini";
 const Message = ({ message }: { message: GeminiChatMessage }) => {
   const isUser = message instanceof HumanMessage;
 
-  useEffect(() => {
-    console.log("Message", message instanceof HumanMessage, message);
-  });
-
   return (
     <article
       className={cx(

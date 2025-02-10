@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Form from "@/components/form";
 import Message from "@/components/message";
 import cx from "@/utils/cx";
@@ -8,7 +8,7 @@ import PoweredBy from "@/components/powered-by";
 import MessageLoading from "@/components/message-loading";
 import { INITIAL_QUESTIONS } from "@/utils/const";
 import { ChatAgent, GeminiChatMessage } from "./api/agent/gemini";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { HumanMessage } from "@langchain/core/messages";
 
 export default function Home() {
   // Note: Instantiating the agent on the client may expose your API key.
@@ -20,11 +20,9 @@ export default function Home() {
   const formRef = useRef<HTMLFormElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Local state to hold a chat log
-  const [chatLog, setChatLog] = useState<GeminiChatMessage[]>([]);
   const [streaming, setStreaming] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
-  const [chatResponse, setChatResponse] = useState<string>("");
+  const [chatLog, setChatLog] = useState<GeminiChatMessage[]>([]);
 
   // If you're also using the useChat hook, make sure its state and agent context do not conflict.
   // For this example, we'll show the agent's response separately.
@@ -40,30 +38,22 @@ export default function Home() {
     }, 1);
   };
 
-  // Scroll to bottom when log updates
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView();
-    }
-  }, [chatLog]);
-
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      // Append user input to agent state and chat log
+      // Append user input to agent state
       agentRef.current?.addMessage(new HumanMessage(input));
-      setChatLog((prev) => [...prev, new HumanMessage(input)]);
+      messagesEndRef.current && messagesEndRef.current.scrollIntoView();
       setInput("");
       setStreaming(true);
 
       // Get response from agent
       agentRef.current
         ?.callModel()
-        .then((response) => {
-          const responseText = response as unknown as string;
-          setChatResponse(responseText);
-          setChatLog((prev) => [...prev, new AIMessage(responseText)]);
+        .then(() => {
           setStreaming(false);
+          setChatLog(agentRef.current?.getMessages() || []);
+          messagesEndRef.current && messagesEndRef.current.scrollIntoView();
         })
         .catch((error) => {
           console.error("Error from agent:", error);
@@ -102,7 +92,7 @@ export default function Home() {
         )}
 
         {/* Anchor for scrolling */}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} id="messagesEndRef" />
       </div>
 
       <div

@@ -17,13 +17,12 @@ export default function Home() {
 
   const { messages, input, handleInputChange, handleSubmit, setInput } =
     useChat({
-      api: "/api/guru",
+      api: "/api/agent",
       initialMessages: [
         {
           id: "0",
           role: "system",
           content: `**Welcome to DegreeGuru**
-
 Your ultimate companion in navigating the academic landscape of Stanford.`,
         },
       ],

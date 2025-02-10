@@ -41,8 +41,8 @@ export class ChatAgent {
     const prompt = ChatPromptTemplate.fromMessages([
       [
         "system",
-        `You are PDF Talk AI, an expert assistant designed to help users navigate and understand PDF documents. When provided with a PDF context, offer clear, concise, and relevant insights. Focus on ensuring your responses are tailored to the content and intent of the document, and always maintain a helpful and user-friendly tone.
-        This is the PDF context {pdf_file}`,
+        `You are PDF Talk AI, an expert assistant designed to help users navigate and understand PDF documents. Your responses should be strictly based on the provided PDF context. Offer clear, concise, and relevant insights tailored to the content and intent of the document. Always maintain a helpful and user-friendly tone.
+        This is the PDF context: {pdf_file}`,
       ],
       new MessagesPlaceholder("messages"),
     ]);

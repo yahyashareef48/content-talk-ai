@@ -52,9 +52,6 @@ export class ChatAgent {
       pdf_file: this.state.PDFFile,
     });
 
-    console.log("PDF", this.state.PDFFile);
-    console.log("Formatted Prompt", formattedPrompt);
-
     const GeminiResponse = await this.model.invoke(formattedPrompt);
 
     this.addMessage(GeminiResponse);

@@ -11,8 +11,8 @@ const PoweredBy = () => {
         LangChain
       </a>{" "}
       and{" "}
-      <a href="https://www.deepseek.com/" target="_blank">
-        DeepSeek-R1
+      <a href="https://ai.google.dev/" target="_blank">
+        Gemini API
       </a>
     </p>
   );

@@ -64,7 +64,7 @@ export default function Home() {
   );
 
   return (
-    <main className="relative max-w-screen-md p-4 md:p-6 mx-auto flex min-h-svh !pb-32 md:!pb-40 overflow-y-auto">
+    <div>
       {!pdfFile ? (
         <div className="w-full flex justify-center items-center min-h-screen">
           <input
@@ -76,52 +76,54 @@ export default function Home() {
           />
           <button
             onClick={handleFileButtonClick}
-            className="p-4 border-2 border-primary-lite rounded-xl flex items-center justify-center"
+            className="p-8 border-2 border-primary-lite rounded-xl flex items-center justify-center text-xl"
           >
-            <IconPlus className="text-primary-lite" size={24} />
+            <IconPlus className="text-primary-lite" size={40} />
           </button>
         </div>
       ) : (
-        <div className="w-full">
-          {chatLog.map((message) => (
-            <Message key={Math.random()} message={message} />
-          ))}
+        <main className="relative max-w-screen-md p-4 md:p-6 mx-auto flex min-h-svh !pb-32 md:!pb-40 overflow-y-auto">
+          <div className="w-full">
+            {chatLog.map((message) => (
+              <Message key={Math.random()} message={message} />
+            ))}
 
-          {/* Loading indicator */}
-          {streaming && <MessageLoading />}
+            {/* Loading indicator */}
+            {streaming && <MessageLoading />}
 
-          {/* Anchor for scrolling */}
-          <div ref={messagesEndRef} id="messagesEndRef" />
+            {/* Anchor for scrolling */}
+            <div ref={messagesEndRef} id="messagesEndRef" />
 
-          <div
-            className={cx(
-              "fixed z-10 bottom-0 inset-x-0",
-              "flex justify-center items-center",
-              "bg-background",
-            )}
-          >
-            <span
-              className="absolute bottom-full h-10 inset-x-0 from-background/0
+            <div
+              className={cx(
+                "fixed z-10 bottom-0 inset-x-0",
+                "flex justify-center items-center",
+                "bg-background",
+              )}
+            >
+              <span
+                className="absolute bottom-full h-10 inset-x-0 from-background/0
                bg-gradient-to-b to-background pointer-events-none"
-            />
-            <div className="w-full max-w-screen-md rounded-xl px-4 md:px-5 py-6">
-              <Form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                inputProps={{
-                  disabled: streaming,
-                  value: input,
-                  onChange: (e) => setInput(e.target.value),
-                }}
-                buttonProps={{
-                  disabled: streaming,
-                }}
               />
-              <PoweredBy />
+              <div className="w-full max-w-screen-md rounded-xl px-4 md:px-5 py-6">
+                <Form
+                  ref={formRef}
+                  onSubmit={handleSubmit}
+                  inputProps={{
+                    disabled: streaming,
+                    value: input,
+                    onChange: (e) => setInput(e.target.value),
+                  }}
+                  buttonProps={{
+                    disabled: streaming,
+                  }}
+                />
+                <PoweredBy />
+              </div>
             </div>
           </div>
-        </div>
+        </main>
       )}
-    </main>
+    </div>
   );
 }

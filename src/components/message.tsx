@@ -1,12 +1,17 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import Markdown from "markdown-to-jsx";
 import cx from "@/utils/cx";
-import { Message as MessageProps } from "ai/react";
 import UpstashLogo from "@/components/upstash-logo";
 import { IconUser } from "@tabler/icons-react";
+import { HumanMessage } from "@langchain/core/messages";
+import { GeminiChatMessage } from "@/app/api/agent/gemini";
 
-const Message: React.FC<MessageProps> = ({ content, role }) => {
-  const isUser = role === "user";
+const Message = ({ message }: { message: GeminiChatMessage }) => {
+  const isUser = message instanceof HumanMessage;
+
+  useEffect(() => {
+    console.log("Message", message instanceof HumanMessage, message);
+  });
 
   return (
     <article
@@ -28,7 +33,7 @@ const Message: React.FC<MessageProps> = ({ content, role }) => {
           },
         }}
       >
-        {content}
+        {String(message.content)}
       </Markdown>
     </article>
   );

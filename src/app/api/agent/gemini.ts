@@ -16,7 +16,7 @@ import {
 } from "@langchain/core/prompts";
 import { GEMINI_API_KEY } from "../../../../agent.config";
 
-type GeminiChatMessage =
+export type GeminiChatMessage =
   | HumanMessage
   | AIMessage
   | BaseMessage

@@ -43,6 +43,7 @@ export default function Home() {
       agentRef.current?.addMessage(new HumanMessage(input));
       messagesEndRef.current && messagesEndRef.current.scrollIntoView();
       setInput("");
+      setChatLog(agentRef.current?.getMessages() || []);
       setStreaming(true);
 
       // Get response from agent

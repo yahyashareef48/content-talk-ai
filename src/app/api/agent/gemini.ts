@@ -24,7 +24,7 @@ export type GeminiChatMessage =
 export class ChatAgent {
   private model: ChatGoogleGenerativeAI;
   private state: {
-    PDFFile: String | null;
+    pdf_file: String | null;
     messages: GeminiChatMessage[];
   };
 
@@ -34,7 +34,7 @@ export class ChatAgent {
       maxOutputTokens: 2048,
       apiKey: GEMINI_API_KEY,
     });
-    this.state = { messages: [], PDFFile: null };
+    this.state = { messages: [], pdf_file: null };
   }
 
   async callModel(): Promise<AIMessageChunk> {
@@ -49,7 +49,7 @@ export class ChatAgent {
 
     const formattedPrompt = await prompt.formatMessages({
       messages: this.state.messages,
-      pdf_file: this.state.PDFFile,
+      pdf_file: this.state.pdf_file,
     });
 
     const GeminiResponse = await this.model.invoke(formattedPrompt);
@@ -70,7 +70,7 @@ export class ChatAgent {
 
   async setPDFFile(file: File): Promise<void> {
     pdfToText(file)
-      .then((text) => (this.state.PDFFile = text))
+      .then((text) => (this.state.pdf_file = text))
       .catch((error) => console.error("Failed to extract text from pdf"));
   }
   // Optionally, add a helper to clear conversation

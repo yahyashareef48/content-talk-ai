@@ -6,7 +6,6 @@ import Message from "@/components/message";
 import cx from "@/utils/cx";
 import PoweredBy from "@/components/powered-by";
 import MessageLoading from "@/components/message-loading";
-import { INITIAL_QUESTIONS } from "@/utils/const";
 import { ChatAgent, GeminiChatMessage } from "./api/agent/gemini";
 import { HumanMessage } from "@langchain/core/messages";
 
@@ -23,20 +22,6 @@ export default function Home() {
   const [streaming, setStreaming] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
   const [chatLog, setChatLog] = useState<GeminiChatMessage[]>([]);
-
-  // If you're also using the useChat hook, make sure its state and agent context do not conflict.
-  // For this example, we'll show the agent's response separately.
-  const onClickQuestion = (value: string) => {
-    setInput(value);
-    setTimeout(() => {
-      formRef.current?.dispatchEvent(
-        new Event("submit", {
-          cancelable: true,
-          bubbles: true,
-        }),
-      );
-    }, 1);
-  };
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -72,24 +57,6 @@ export default function Home() {
 
         {/* Loading indicator */}
         {streaming && <MessageLoading />}
-
-        {/* Button for initial questions */}
-        {chatLog.length === 0 && (
-          <div className="mt-4 md:mt-6 grid md:grid-cols-2 gap-2 md:gap-4">
-            {INITIAL_QUESTIONS.map((msg) => (
-              <button
-                key={msg.content}
-                type="button"
-                className="cursor-pointer text-text-lite select-none text-left bg-background font-normal
-                  border border-border rounded-xl p-3 md:px-4 md:py-3
-                  hover:bg-background-hover hover:border-border-hover"
-                onClick={() => onClickQuestion(msg.content)}
-              >
-                {msg.content}
-              </button>
-            ))}
-          </div>
-        )}
 
         {/* Anchor for scrolling */}
         <div ref={messagesEndRef} id="messagesEndRef" />

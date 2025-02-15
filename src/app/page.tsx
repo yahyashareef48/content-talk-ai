@@ -8,7 +8,7 @@ import PoweredBy from "@/components/powered-by";
 import MessageLoading from "@/components/message-loading";
 import { ChatAgent, GeminiChatMessage } from "./api/agent/gemini";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { IconPlus } from "@tabler/icons-react";
+import { IconLoader3, IconPlus } from "@tabler/icons-react";
 
 export default function Home() {
   // Note: Instantiating the agent on the client may expose your API key.
@@ -29,6 +29,7 @@ export default function Home() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       try {
+        setStreaming(true);
         await agentRef.current?.setPDFFile(e.target.files[0]);
         await agentRef.current?.callModel();
         setStreaming(false);
@@ -77,19 +78,30 @@ export default function Home() {
     <div>
       {!pdfFile ? (
         <div className="w-full flex justify-center items-center min-h-screen">
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-            className="hidden"
-          />
-          <button
-            onClick={handleFileButtonClick}
-            className="p-8 border-2 border-primary-lite rounded-xl flex items-center justify-center text-xl"
-          >
-            <IconPlus className="text-primary-lite" size={40} />
-          </button>
+          {streaming ? (
+            <div className="w-full flex justify-center items-center min-h-screen">
+              <IconLoader3
+                className="text-primary-lite animate-spin"
+                size={64}
+              />
+            </div>
+          ) : (
+            <div>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                className="hidden"
+              />
+              <button
+                onClick={handleFileButtonClick}
+                className="p-8 border-2 border-primary-lite rounded-xl flex items-center justify-center text-xl"
+              >
+                <IconPlus className="text-primary-lite" size={40} />
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <main className="relative max-w-screen-md p-4 md:p-6 mx-auto flex min-h-svh !pb-32 md:!pb-40 overflow-y-auto">

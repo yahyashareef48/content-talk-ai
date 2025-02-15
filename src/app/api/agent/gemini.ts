@@ -44,14 +44,19 @@ export class ChatAgent {
   }
 
   async callModel(): Promise<AIMessageChunk> {
-    const prompt = ChatPromptTemplate.fromMessages([
+    const promptMessages: any[] = [
       [
         "system",
-        `You are PDF Talk AI, an expert assistant designed to help users navigate and understand PDF documents. Your responses should be strictly based on the provided PDF context. Offer clear, concise, and relevant insights tailored to the content and intent of the document. Always maintain a helpful and user-friendly tone.
+        `You are a highly capable document summarization assistant. Your task is to read and analyze the entire document and produce a clear, concise summary. The summary should capture the key points, main themes, and any critical insights, formatted in an easy-to-read manner. Please ensure accuracy and clarity so that the user can quickly grasp the document's core content.
         This is the PDF context: {pdf_file}`,
       ],
-      new MessagesPlaceholder("messages"),
-    ]);
+    ];
+
+    if (this.state.messages.length > 0) {
+      promptMessages.push(new MessagesPlaceholder("messages"));
+    }
+
+    const prompt = ChatPromptTemplate.fromMessages(promptMessages);
 
     const formattedPrompt = await prompt.formatMessages({
       messages: this.state.messages,
@@ -71,13 +76,16 @@ export class ChatAgent {
   }
 
   getMessages() {
-    return this.state.messages;
+    return this.state.messages.slice(1);
   }
 
   async setPDFFile(file: File): Promise<void> {
-    pdfToText(file)
-      .then((text) => (this.state.pdf_file = text))
-      .catch((error) => console.error("Failed to extract text from pdf"));
+    try {
+      const text = await pdfToText(file);
+      this.state.pdf_file = text;
+    } catch (error) {
+      console.error("Failed to extract text from pdf", error);
+    }
   }
   // Optionally, add a helper to clear conversation
   resetConversation() {

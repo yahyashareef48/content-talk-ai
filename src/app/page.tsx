@@ -7,7 +7,7 @@ import cx from "@/utils/cx";
 import PoweredBy from "@/components/powered-by";
 import MessageLoading from "@/components/message-loading";
 import { ChatAgent, GeminiChatMessage } from "./api/agent/gemini";
-import { HumanMessage } from "@langchain/core/messages";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { IconPlus } from "@tabler/icons-react";
 
 export default function Home() {
@@ -26,10 +26,20 @@ export default function Home() {
   const [chatLog, setChatLog] = useState<GeminiChatMessage[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      agentRef.current?.setPDFFile(e.target.files[0]);
-      setChatLog(agentRef.current?.getMessages() || []);
+      try {
+        await agentRef.current?.setPDFFile(e.target.files[0]);
+        await agentRef.current?.callModel();
+        setStreaming(false);
+        setChatLog(agentRef.current?.getMessages() || []);
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView();
+        }
+      } catch (error) {
+        console.error("Error from agent:", error);
+        setStreaming(false);
+      }
       setPdfFile(e.target.files[0]);
     }
   };

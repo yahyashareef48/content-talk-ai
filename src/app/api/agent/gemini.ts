@@ -12,7 +12,7 @@ import {
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import pdfToText from "react-pdftotext";
-import { GEMINI_API_KEY } from "../../../../agent.config";
+import { GEMINI_API_KEY } from "../../../../env";
 
 export type GeminiChatMessage =
   | HumanMessage

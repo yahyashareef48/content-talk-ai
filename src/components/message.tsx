@@ -4,7 +4,7 @@ import cx from "@/utils/cx";
 import UpstashLogo from "@/components/upstash-logo";
 import { IconUser } from "@tabler/icons-react";
 import { HumanMessage } from "@langchain/core/messages";
-import { GeminiChatMessage } from "@/app/api/agent/gemini";
+import { GeminiChatMessage } from "@/app/agent/gemini";
 
 const Message = ({ message }: { message: GeminiChatMessage }) => {
   const isUser = message instanceof HumanMessage;

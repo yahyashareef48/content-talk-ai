@@ -6,7 +6,7 @@ import Message from "@/components/message";
 import cx from "@/utils/cx";
 import PoweredBy from "@/components/powered-by";
 import MessageLoading from "@/components/message-loading";
-import { ChatAgent, GeminiChatMessage } from "./api/agent/gemini";
+import { ChatAgent, GeminiChatMessage } from "./agent/gemini";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { IconLoader3, IconPlus } from "@tabler/icons-react";
 

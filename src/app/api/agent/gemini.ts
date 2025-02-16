@@ -70,6 +70,47 @@ export class ChatAgent {
     return GeminiResponse;
   }
 
+  async getNextPromptSuggestions(): Promise<string[]> {
+    const suggestionPromptMessages: any[] = [
+      [
+        "system",
+        `You are a helpful document assistant. Based on the current conversation and the PDF content provided, please suggest 3 potential questions or prompts that the user might ask next. Return your suggestions as a JSON array of strings.`,
+      ],
+    ];
+
+    if (this.state.messages.length > 0) {
+      suggestionPromptMessages.push(new MessagesPlaceholder("messages"));
+    }
+
+    const suggestionPrompt = ChatPromptTemplate.fromMessages(
+      suggestionPromptMessages,
+    );
+
+    const formattedSuggestionPrompt = await suggestionPrompt.formatMessages({
+      messages: this.state.messages,
+      pdf_file: this.state.pdf_file,
+    });
+
+    const suggestionResponse = await this.model.invoke(
+      formattedSuggestionPrompt,
+    );
+
+    console.log("Suggestion response:", suggestionResponse.content);
+
+    // Parse the suggestions by expecting a JSON array.
+    try {
+      const suggestions = JSON.parse(suggestionResponse.content.toString());
+      return Array.isArray(suggestions)
+        ? suggestions
+            .map((s) => s.toString().trim())
+            .filter((s) => s.length > 0)
+        : [];
+    } catch (error) {
+      console.error("Error parsing suggestions:", error);
+      return [];
+    }
+  }
+
   // Add a message to the conversation context
   addMessage(message: GeminiChatMessage) {
     this.state.messages.push(message);

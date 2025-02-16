@@ -25,6 +25,7 @@ export default function Home() {
   const [input, setInput] = useState<string>("");
   const [chatLog, setChatLog] = useState<GeminiChatMessage[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -32,6 +33,9 @@ export default function Home() {
         setStreaming(true);
         await agentRef.current?.setPDFFile(e.target.files[0]);
         await agentRef.current?.callModel();
+        const nextSuggestions =
+          await agentRef.current?.getNextPromptSuggestions();
+        setSuggestions(nextSuggestions || []);
         setStreaming(false);
         setChatLog(agentRef.current?.getMessages() || []);
         if (messagesEndRef.current) {
@@ -61,10 +65,13 @@ export default function Home() {
       // Get response from agent
       agentRef.current
         ?.callModel()
-        .then(() => {
+        .then(async () => {
           setStreaming(false);
           setChatLog(agentRef.current?.getMessages() || []);
           messagesEndRef.current && messagesEndRef.current.scrollIntoView();
+          const nextSuggestions =
+            await agentRef.current?.getNextPromptSuggestions();
+          setSuggestions(nextSuggestions || []);
         })
         .catch((error) => {
           console.error("Error from agent:", error);

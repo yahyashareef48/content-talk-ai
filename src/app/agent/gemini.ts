@@ -38,7 +38,7 @@ export class ChatAgent {
 
     const defaultMessage = new AIMessage({
       content:
-        "Hello! I am PDF Talk AI. How can I assist you with your PDF document today?",
+        "Hello! I am PDF/Youtube Video Talk AI. How can I assist you with your PDF/Youtube Video document today?",
     });
     this.addMessage(defaultMessage);
   }
@@ -49,7 +49,7 @@ export class ChatAgent {
         "system",
         `You are a highly capable document summarization assistant. Your task is to read and analyze the entire document and produce a clear, concise summary. The summary should capture the key points, main themes, and any critical insights, formatted in an easy-to-read manner. Please ensure accuracy and clarity so that the user can quickly grasp the document's core content.
         AFTER THAT TALK TO THE USER IN THE CONTEXT OF THE DOCUMENT.
-        This is the PDF context: {pdf_file}`,
+        This is the PDF/Youtube Video context: {pdf_file}`,
       ],
     ];
 
@@ -75,14 +75,14 @@ export class ChatAgent {
     const suggestionPromptMessages: any[] = [
       [
         "system",
-        `You are a document Q/A expert. Generate 3 VERY SHORT follow-up questions (8-12 words max) based on the conversation and PDF.
+        `You are a document Q/A expert. Generate 3 VERY SHORT follow-up questions (8-12 words max) based on the conversation and PDF/Youtube Video.
         FORMAT STRICTLY AS: ["question?", "question?", "question?"]
         NO MARKDOWN, ONLY PLAIN JSON ARRAY. AVOID COMPOUND QUESTIONS.`,
       ],
       [
         "human",
         `Conversation context: {messages}
-        PDF content summary:
+        PDF/Youtube Video content summary:
         {pdf_file}`,
       ],
     ];
@@ -143,7 +143,6 @@ export class ChatAgent {
 
   async getYouTubeVideoTranscript(videoLink: string): Promise<string> {
     const videoId = extractVideoId(videoLink);
-    console.log(videoId);
     if (!videoId) {
       throw new Error("Invalid YouTube URL");
     }
@@ -157,14 +156,18 @@ export class ChatAgent {
       return data.transcript;
     } catch (error) {
       console.error(`Error fetching transcript: ${error}`);
-      return "";
+      throw error;
     }
   }
 
-  async setPDFFile(file: File): Promise<void> {
+  async setContext(file: File | string): Promise<void> {
     try {
-      const text = await pdfToText(file);
-      this.state.pdf_file = text;
+      if (typeof file === "string") {
+        this.state.pdf_file = file;
+      } else {
+        const text = await pdfToText(file);
+        this.state.pdf_file = text;
+      }
     } catch (error) {
       console.error("Failed to extract text from pdf", error);
     }

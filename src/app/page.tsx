@@ -24,17 +24,14 @@ export default function Home() {
   const [streaming, setStreaming] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
   const [chatLog, setChatLog] = useState<GeminiChatMessage[]>([]);
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [chatWindowOpen, setChatWindowOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       try {
         setStreaming(true);
-        await agentRef.current?.getYouTubeVideoTranscript(
-          "https://www.youtube.com/watch?v=0e3GPea1Tyg",
-        );
-        await agentRef.current?.setPDFFile(e.target.files[0]);
+        await agentRef.current?.setContext(e.target.files[0]);
         await agentRef.current?.callModel();
         const nextSuggestions =
           await agentRef.current?.getNextPromptSuggestions();
@@ -48,11 +45,37 @@ export default function Home() {
         console.error("Error from agent:", error);
         setStreaming(false);
       }
-      setPdfFile(e.target.files[0]);
+      setChatWindowOpen(true);
     }
   };
+
   const handleFileButtonClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleYoutubeSubmit = async (youtubeUrl: string) => {
+    if (!youtubeUrl) return;
+
+    try {
+      setStreaming(true);
+      const transcript = await agentRef.current?.getYouTubeVideoTranscript(
+        youtubeUrl,
+      );
+      await agentRef.current?.setContext(transcript as string);
+      await agentRef.current?.callModel();
+      const nextSuggestions =
+        await agentRef.current?.getNextPromptSuggestions();
+      setSuggestions(nextSuggestions || []);
+      setStreaming(false);
+      setChatLog(agentRef.current?.getMessages() || []);
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView();
+      }
+    } catch (error) {
+      console.error("Error fetching YouTube transcript:", error);
+      setStreaming(false);
+    }
+    setChatWindowOpen(true);
   };
 
   const handleSubmit = useCallback(
@@ -81,12 +104,12 @@ export default function Home() {
           setStreaming(false);
         });
     },
-    [agentRef, input, pdfFile],
+    [agentRef, input, chatWindowOpen],
   );
 
   return (
     <div>
-      {!pdfFile ? (
+      {!chatWindowOpen ? (
         <div className="w-full flex justify-center items-center min-h-screen">
           {streaming ? (
             <div className="w-full flex justify-center items-center min-h-screen">
@@ -106,10 +129,16 @@ export default function Home() {
               />
               <button
                 onClick={handleFileButtonClick}
-                className="p-8 border-2 border-primary-lite rounded-xl flex items-center justify-center text-xl"
+                className="py-8 px-24 border-2 border-primary-lite rounded-xl flex items-center justify-center text-xl"
               >
                 <IconPlus className="text-primary-lite" size={40} />
               </button>
+              <input
+                type="text"
+                placeholder="Enter YouTube URL"
+                onChange={(e) => handleYoutubeSubmit(e.target.value)}
+                className="p-2 border-2 mt-2 border-primary-lite rounded-xl w-full bg-background-lite text-text-lite placeholder-text-dark"
+              />
             </div>
           )}
         </div>

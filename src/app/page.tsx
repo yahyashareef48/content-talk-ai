@@ -31,7 +31,9 @@ export default function Home() {
     if (e.target.files && e.target.files[0]) {
       try {
         setStreaming(true);
-        await agentRef.current?.getYouTubeVideoTranscript("bn0Kh9c4Zv4");
+        await agentRef.current?.getYouTubeVideoTranscript(
+          "https://www.youtube.com/watch?v=0e3GPea1Tyg",
+        );
         await agentRef.current?.setPDFFile(e.target.files[0]);
         await agentRef.current?.callModel();
         const nextSuggestions =

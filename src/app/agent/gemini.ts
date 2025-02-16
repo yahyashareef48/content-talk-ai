@@ -143,6 +143,7 @@ export class ChatAgent {
 
   async getYouTubeVideoTranscript(videoLink: string): Promise<string> {
     const videoId = extractVideoId(videoLink);
+    console.log(videoId);
     if (!videoId) {
       throw new Error("Invalid YouTube URL");
     }
@@ -156,7 +157,7 @@ export class ChatAgent {
       return data.transcript;
     } catch (error) {
       console.error(`Error fetching transcript: ${error}`);
-      throw error;
+      return "";
     }
   }
 

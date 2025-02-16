@@ -1,21 +1,22 @@
-import sys
+from fastapi import FastAPI, HTTPException, Query
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import JSONFormatter
-def main(video_id: str, languages: list[str] = ["en"]) -> None:
+
+app = FastAPI(
+    title="YouTube Transcript API", 
+    description="API for retrieving YouTube video transcripts."
+)
+
+@app.get("/transcript")
+def get_transcript(video_id: str, languages: list[str] = Query(["en"])):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=languages)
         formatter = JSONFormatter()
         json_transcript = formatter.format_transcript(transcript, indent=2)
-        print(json_transcript)
+        return {"video_id": video_id, "transcript": json_transcript}
     except Exception as e:
-        print("Error:", e)
-        sys.exit(1)
-
+        raise HTTPException(status_code=400, detail=str(e))
+    
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python main.py <video_id> [language1 language2 ...]")
-        sys.exit(1)
-    video_id = sys.argv[1]
-    # Use additional arguments as languages if provided
-    languages = sys.argv[2:] if len(sys.argv) > 2 else ["en"]
-    main(video_id, languages)
+    import uvicorn
+    uvicorn.run(app, host="8000")

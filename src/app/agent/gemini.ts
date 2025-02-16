@@ -13,7 +13,6 @@ import {
 } from "@langchain/core/prompts";
 import pdfToText from "react-pdftotext";
 import { GEMINI_API_KEY } from "../../../env";
-import { exec } from "child_process";
 
 export type GeminiChatMessage =
   | HumanMessage
@@ -142,18 +141,23 @@ export class ChatAgent {
     return this.state.messages.slice(1);
   }
 
-  async getYouTubeVideoTranscript(videoId: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      exec(`python main.py`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          reject(error);
-        }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-        resolve(stdout);
-      });
-    });
+  async getYouTubeVideoTranscript(videoLink: string): Promise<string> {
+    const videoId = extractVideoId(videoLink);
+    if (!videoId) {
+      throw new Error("Invalid YouTube URL");
+    }
+    const apiUrl = `http://localhost:8000/transcript?video_id=${videoId}`;
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.transcript;
+    } catch (error) {
+      console.error(`Error fetching transcript: ${error}`);
+      throw error;
+    }
   }
 
   async setPDFFile(file: File): Promise<void> {
@@ -168,4 +172,11 @@ export class ChatAgent {
   resetConversation() {
     this.state.messages = [];
   }
+}
+
+function extractVideoId(url: string): string | null {
+  // Matches common forms: https://www.youtube.com/watch?v=VIDEOID and https://youtu.be/VIDEOID
+  const regex = /(?:v=|\/)([0-9A-Za-z_-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
 }

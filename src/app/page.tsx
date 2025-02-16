@@ -122,6 +122,7 @@ export default function Home() {
 
             {/* Anchor for scrolling */}
             <div ref={messagesEndRef} id="messagesEndRef" />
+            <div className="mb-20" />
 
             <div
               className={cx(
@@ -147,6 +148,24 @@ export default function Home() {
                     disabled: streaming,
                   }}
                 />
+                {suggestions.length > 0 && (
+                  <div className="mt-4 grid grid-cols-3 gap-2 overflow-hidden">
+                    {suggestions.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setInput(suggestion);
+                          formRef.current?.dispatchEvent(
+                            new Event("submit", { cancelable: true }),
+                          );
+                        }}
+                        className="text-sm text-left text-primary-lite hover:text-primary-washed border border-primary-lite rounded-lg p-2 truncate"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <PoweredBy />
               </div>
             </div>

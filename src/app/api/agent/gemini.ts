@@ -74,43 +74,63 @@ export class ChatAgent {
     const suggestionPromptMessages: any[] = [
       [
         "system",
-        `You are a helpful document assistant. Based on the current conversation and the PDF content provided, please suggest 3 potential questions or prompts that the user might ask next. Return your suggestions as a JSON array of strings.`,
+        `You are a document Q/A expert. Generate 3 VERY SHORT follow-up questions (8-12 words max) based on the conversation and PDF.
+        FORMAT STRICTLY AS: ["question?", "question?", "question?"]
+        NO MARKDOWN, ONLY PLAIN JSON ARRAY. AVOID COMPOUND QUESTIONS.`,
+      ],
+      [
+        "human",
+        `Conversation context: {messages}
+        PDF content summary:
+        {pdf_file}`,
       ],
     ];
 
-    if (this.state.messages.length > 0) {
-      suggestionPromptMessages.push(new MessagesPlaceholder("messages"));
-    }
+    const conversationContext = this.state.messages.slice(-2);
+    const variables = {
+      messages: conversationContext
+        .map((m: any) => `${m.role}: ${m.content}`)
+        .join("\n"),
+      pdf_file: this.state.pdf_file,
+    };
 
     const suggestionPrompt = ChatPromptTemplate.fromMessages(
       suggestionPromptMessages,
     );
+    const formattedPrompt = await suggestionPrompt.formatMessages(variables);
 
-    const formattedSuggestionPrompt = await suggestionPrompt.formatMessages({
-      messages: this.state.messages,
-      pdf_file: this.state.pdf_file,
-    });
-
-    const suggestionResponse = await this.model.invoke(
-      formattedSuggestionPrompt,
-    );
-
-    console.log("Suggestion response:", suggestionResponse.content);
-
-    // Parse the suggestions by expecting a JSON array.
     try {
-      const suggestions = JSON.parse(suggestionResponse.content.toString());
-      return Array.isArray(suggestions)
-        ? suggestions
-            .map((s) => s.toString().trim())
-            .filter((s) => s.length > 0)
-        : [];
+      const suggestionResponse = await this.model.invoke(formattedPrompt);
+      const responseContent = String(suggestionResponse.content).trim();
+
+      // Improved JSON extraction with error-tolerant parsing
+      let suggestions;
+      try {
+        suggestions = JSON.parse(responseContent);
+      } catch {
+        const cleaned =
+          responseContent
+            .replace(/[\s\n]+/g, " ")
+            .replace(/(\w)(")(\w)/g, "$1$3") // Fix common quote issues
+            .match(/\[.*\]/)?.[0] || "[]";
+        suggestions = JSON.parse(cleaned);
+      }
+
+      // Handle both object and string formats
+      return suggestions
+        .map((s: any) => {
+          if (typeof s === "string") return s.trim();
+          if (s.content) return s.content.trim();
+          if (s.text) return s.text.trim();
+          return JSON.stringify(s).trim();
+        })
+        .filter((s: any) => s.length > 0)
+        .slice(0, 3); // Ensure max 3 suggestions
     } catch (error) {
-      console.error("Error parsing suggestions:", error);
+      console.error("Suggestion generation error:", error);
       return [];
     }
   }
-
   // Add a message to the conversation context
   addMessage(message: GeminiChatMessage) {
     this.state.messages.push(message);
